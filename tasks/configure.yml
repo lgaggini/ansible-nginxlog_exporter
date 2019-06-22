@@ -13,8 +13,8 @@
   template:
     src: nginxlog_exporter_config.yml.j2
     dest: "{{ nginxlog_exporter_conf_dir }}/config.yml"
-    owner: root
-    group: root
+    owner: "{{ nginxlog_exporter_system_user }}"
+    group: "{{ nginxlog_exporter_system_group }}"
     mode: 0644
   notify: restart nginxlog_exporter
 
