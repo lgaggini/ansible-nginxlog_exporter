@@ -15,6 +15,7 @@
     system: true
     createhome: false
     home: /
+    groups: adm
   when: nginxlog_exporter_system_user != "root"
 
 - name: Create /usr/local/bin
