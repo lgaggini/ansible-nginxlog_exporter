@@ -1,0 +1,44 @@
+---
+- name: Create the nginxlog_exporter group
+  group:
+    name: "{{ nginxlog_exporter_system_group }}"
+    state: present
+    system: true
+  when: nginxlog_exporter_system_group != "root"
+
+- name: Create the nginxlog_exporter user
+  user:
+    name: "{{ nginxlog_exporter_system_user }}"
+    groups: "{{ nginxlog_exporter_system_group }}"
+    append: true
+    shell: /usr/sbin/nologin
+    system: true
+    createhome: false
+    home: /
+  when: nginxlog_exporter_system_user != "root"
+
+- name: Create /usr/local/bin
+  file:
+    path: /usr/local/bin
+    state: directory
+    mode: 0755
+
+- name: Download nginxlog_exporter binary to /usr/local/bin
+  become: false
+  get_url:
+    url: "https://github.com/martin-helmich/prometheus-nginxlog-exporter/releases/tag/{{ nginxlog_exporter_version }}"
+    dest: "/usr/local/bin/nginxlog_exporter"
+  register: _download_binary
+  until: _download_binary is succeeded
+  retries: 5
+  delay: 2
+  check_mode: false
+
+- name: Set execute permission for nginxlog_exporter binaries
+  file:
+    path: "/usr/local/bin/nginxlog_exporter"
+    mode: 0755
+    owner: root
+    group: root
+  notify: restart nginxlog_exporter
+  when: not ansible_check_mode

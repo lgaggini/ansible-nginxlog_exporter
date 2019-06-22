@@ -1,0 +1,26 @@
+---
+- import_tasks: preflight.yml
+  tags:
+    - nginxlog_exporter_install
+    - nginxlog_exporter_configure
+    - nginxlog_exporter_run
+
+- import_tasks: install.yml
+  become: true
+  tags:
+    - nginxlog_exporter_install
+
+- import_tasks: configure.yml
+  become: true
+  tags:
+    - nginxlog_exporter_configure
+
+- name: Ensure Node Exporter is enabled on boot
+  become: true
+  systemd:
+    daemon_reload: true
+    name: nginxlog_exporter
+    enabled: true
+    state: started
+  tags:
+    - nginxlog_exporter_run

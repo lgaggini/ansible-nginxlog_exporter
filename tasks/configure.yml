@@ -1,0 +1,28 @@
+---
+- name: Create nginxlog_exporter configuration dir
+  file:
+    path: "{{ nginxlog_exporter_conf_dir }}"
+    state: directory
+    owner: "{{ nginxlog_exporter_system_user }}"
+    group: "{{ nginxlog_exporter_system_group }}"
+    recurse: true
+    mode: 0775
+  when: nginxlog_exporter_conf_dir | length > 0
+
+- name: Copy the nginxlog Exporter configuration
+  template:
+    src: nginxlog_exporter_config.yml.j2
+    dest: "{{ nginxlog_exporter_conf_dir }}/config.yml"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginxlog_exporter
+
+- name: Copy the nginxlog Exporter systemd service file
+  template:
+    src: nginxlog_exporter.service.j2
+    dest: /etc/systemd/system/nginxlog_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginxlog_exporter

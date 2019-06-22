@@ -1,0 +1,8 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+
+listen:
+  port: {{ nginxlog_exporter_web_listen_port }}
+  address: {{ nginxlog_exporter_web_listen_address }}
+
+namespaces:
+  {{ nginxlog_exporter_namespaces | to_nice_yaml(indent=2,width=200) | indent(2,False) }}
